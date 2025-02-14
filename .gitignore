@@ -1,0 +1,58 @@
+# IntelliJ project files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Maven-specific files
+.mvn/
+target/
+!mvnw
+!mvnw.cmd
+
+# Compiled files
+*.class
+*.jar
+*.war
+
+# Environment and secrets
+.env
+application.properties
+application.yml
+application-*.yml
+
+# Spotless cache
+.spotless/
+
+# Test coverage reports
+jacoco/
+
+# H2 database files (if persisted to disk)
+*.mv.db
+*.trace.db
+
+# Build output
+/target/
+/out/
+
+# Temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Node.js files (if using a frontend within the same repo)
+node_modules/
+
+# Miscellaneous
+.vscode/
+*.gz
+*.zip
