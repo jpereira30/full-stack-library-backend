@@ -25,9 +25,6 @@ target/
 
 # Environment and secrets
 .env
-application.properties
-application.yml
-application-*.yml
 
 # Spotless cache
 .spotless/
