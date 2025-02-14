@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jpereira30.library_api.entity.Book;
+import com.jpereira30.library_api.service.AIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,6 +21,8 @@ class BookIntegrationTest {
   @Autowired private TestRestTemplate restTemplate;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @MockBean private AIService aiService;
 
   private Book testBook;
 
@@ -103,32 +107,25 @@ class BookIntegrationTest {
 
   @Test
   void testDeleteBook() {
-    // Create a new book
     ResponseEntity<Book> createResponse =
         restTemplate.postForEntity("/books", testBook, Book.class);
     Book createdBook = createResponse.getBody();
 
-    // Delete the book
     assert createdBook != null;
-    int id = createdBook.getId().intValue();
     restTemplate.delete("/books/" + createdBook.getId());
 
-    // Attempt to retrieve the deleted book (expect 404)
     ResponseEntity<String> getResponse =
         restTemplate.getForEntity("/books/" + createdBook.getId(), String.class);
     assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    assertThat(getResponse.getBody()).contains("Book with ID " + id + " not found.");
   }
 
   @Test
   void testGetBookById_NotFound() {
     // Attempt to get a book that doesn't exist
-    int id = 999;
-    ResponseEntity<String> response = restTemplate.getForEntity("/books/" + id, String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/books/999", String.class);
 
     // Validate the response
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    assertThat(response.getBody()).contains("Book with ID " + id + " not found.");
   }
 
   @Test

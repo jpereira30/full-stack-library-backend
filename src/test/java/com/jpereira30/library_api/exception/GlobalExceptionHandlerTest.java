@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jpereira30.library_api.entity.Book;
+import com.jpereira30.library_api.service.AIService;
 import com.jpereira30.library_api.service.BookService;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class GlobalExceptionHandlerTest {
   @MockBean private BookService bookService;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @MockBean private AIService aiService;
+
   private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
   @Test

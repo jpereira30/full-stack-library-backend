@@ -1,5 +1,6 @@
 package com.jpereira30.library_api.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +49,7 @@ class BookServiceTest {
     Long id = 1L;
     Book book = new Book(id, "Book", "Author", "111", 2022, "Desc");
     when(bookRepository.findById(id)).thenReturn(Optional.of(book));
-    Optional<Book> result = Optional.ofNullable(bookService.retrieveBookById(id));
+    Optional<Book> result = bookService.retrieveBookById(id);
     assertTrue(result.isPresent());
     assertEquals("Book", result.get().getTitle());
   }
@@ -57,7 +58,8 @@ class BookServiceTest {
   void testGetBookById_NotFound() {
     Long id = 111L;
     when(bookRepository.findById(id)).thenReturn(Optional.empty());
-    assertThrows(BookNotFoundException.class, () -> bookService.retrieveBookById(id));
+    Optional<Book> result = bookService.retrieveBookById(id);
+    assertThat(result).isEmpty();
   }
 
   @Test

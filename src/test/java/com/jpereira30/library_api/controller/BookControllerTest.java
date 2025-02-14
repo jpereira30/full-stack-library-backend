@@ -13,8 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jpereira30.library_api.entity.Book;
 import com.jpereira30.library_api.exception.BookNotFoundException;
+import com.jpereira30.library_api.service.AIService;
 import com.jpereira30.library_api.service.BookService;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import reactor.core.publisher.Mono;
 
 @WebMvcTest(BookController.class)
 class BookControllerTest {
@@ -31,6 +34,8 @@ class BookControllerTest {
   @MockBean private BookService bookService;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @MockBean private AIService aiService;
 
   @Test
   void testCreateBook() throws Exception {
@@ -62,7 +67,7 @@ class BookControllerTest {
   @Test
   void testGetBookById_Found() throws Exception {
     Book book = new Book(1L, "Book1", "Author1", "123", 2022, "Desc");
-    when(bookService.retrieveBookById(1L)).thenReturn(book);
+    when(bookService.retrieveBookById(1L)).thenReturn(Optional.of(book));
     mockMvc
         .perform(get("/books/1"))
         .andExpect(status().isOk())
@@ -135,5 +140,36 @@ class BookControllerTest {
         .perform(get("/books/search?title=Spring"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].title").value("Spring Boot"));
+  }
+
+  @Test
+  void testGetAIInsights_Success() throws Exception {
+    Long bookId = 1L;
+    Book book =
+        new Book(bookId, "Spring Boot Guide", "John Doe", "1234567890", 2021, "Learn Spring Boot");
+
+    // Mock the service to return a book
+    when(bookService.retrieveBookById(bookId)).thenReturn(Optional.of(book));
+
+    // Mock the AI service to return generated insights
+    when(aiService.generateInsights(any(String.class))).thenReturn(Mono.just("Engaging tagline"));
+
+    // Perform GET request and check the response
+    mockMvc
+        .perform(get("/books/{id}/ai-insights", bookId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.book.title").value("Spring Boot Guide"))
+        .andExpect(jsonPath("$.insights").value("Engaging tagline"));
+  }
+
+  @Test
+  void testGetAIInsights_BookNotFound() throws Exception {
+    Long bookId = 999L;
+
+    // Mock the service to return an empty Optional for a non-existing book
+    when(bookService.retrieveBookById(bookId)).thenReturn(Optional.empty());
+
+    // Perform GET request and assert 404 status
+    mockMvc.perform(get("/books/{id}/ai-insights", bookId)).andExpect(status().isNotFound());
   }
 }

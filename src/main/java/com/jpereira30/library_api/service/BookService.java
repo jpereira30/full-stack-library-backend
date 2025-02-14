@@ -4,6 +4,7 @@ import com.jpereira30.library_api.entity.Book;
 import com.jpereira30.library_api.exception.BookNotFoundException;
 import com.jpereira30.library_api.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +29,8 @@ public class BookService {
   }
 
   // Retrieve Book by Id
-  public Book retrieveBookById(Long id) {
-    return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+  public Optional<Book> retrieveBookById(Long id) {
+    return bookRepository.findById(id);
   }
 
   // Update Book
