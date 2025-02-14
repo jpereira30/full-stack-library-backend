@@ -25,8 +25,9 @@ public class BookController {
   }
 
   // Retrieve all books
-  public ResponseEntity<List<Book>> retireveAllBooks() {
-    return ResponseEntity.ok(bookService.retireveAllBooks());
+  @GetMapping
+  public ResponseEntity<List<Book>> retrieveAllBooks() {
+    return ResponseEntity.ok(bookService.retrieveAllBooks());
   }
 
   // Retrieve single  book by ID

@@ -23,13 +23,13 @@ public class BookService {
   }
 
   // Retrieve all Books
-  public List<Book> retireveAllBooks() {
+  public List<Book> retrieveAllBooks() {
     return bookRepository.findAll();
   }
 
   // Retrieve Book by Id
   public Book retrieveBookById(Long id) {
-    return bookRepository.findById(id).orElse(null);
+    return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
   }
 
   // Update Book
